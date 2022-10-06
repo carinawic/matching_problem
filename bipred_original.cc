@@ -16,37 +16,29 @@ using std::cin;
 using std::cout;
 using std::cerr;
 
-int x, y;
-
 void readBipartiteGraph() {
-  int e;
+  int x, y, e;
   // Läs antal hörn och kanter
   cin >> x >> y >> e;
-
-  // Skriv ut flödesgrafen.
-  int s =  x+y+1;
-  int t =  x+y+2;
-  cout << x+y+2 << "\n" << s << " " << t << "\n" << e+x+y << "\n";
 
   // Läs in kanterna
   for (int i = 0; i < e; ++i) {
     int a, b;
     cin >> a >> b;
-
-    // Skriv ut kant. x-y
-    cout << a << " " << b << " " << 1 << "\n";
   }
+}
 
-  // Skriv ut kanterna s-x
-  for (int i = 1; i < x+1; ++i) {
-    cout << s << " " << i << " " << 1 << "\n";
+
+void writeFlowGraph() {
+  int v = 23, e = 0, s = 1, t = 2;
+
+  // Skriv ut antal hörn och kanter samt källa och sänka
+  cout << v << "\n" << s << " " << t << "\n" << e << "\n"; 
+  for (int i = 0; i < e; ++i) {
+    int u, v, c;
+    // Kant från u till v med kapacitet c
+    cout << u << " " << v << " " << c << "\n";
   }
-
-  // Skriv ut kanterna y-t
-  for (int i = 1; i < y+1; ++i) {
-    cout << i+x << " " << t << " " << 1 << "\n";
-  }
-
   // Var noggrann med att flusha utdata när flödesgrafen skrivits ut!
   cout.flush();
 
@@ -63,19 +55,26 @@ void readMaxFlowSolution() {
   // skickade iväg)
   cin >> v >> s >> t >> f >> e;
 
-  // Skriv ut x, x och flödete (maximala matchning).
-  cout << x << " " << y << "\n" << f << "\n";
-
   for (int i = 0; i < e; ++i) {
     int u, v, f;
     // Flöde f från u till v
     cin >> u >> v >> f;
-
-    if ((u != s) && (v != t)) {
-      // Skriv ut kant x-y.
-      cout << u << " " << v << "\n";
-    }
   }
+}
+
+
+void writeBipMatchSolution() {
+  int x = 17, y = 4711, maxMatch = 0;
+
+  // Skriv ut antal hörn och storleken på matchningen
+  cout << x << " " << y << "\n" << maxMatch << "\n";
+
+  for (int i = 0; i < maxMatch; ++i) {
+    int a, b;
+    // Kant mellan a och b ingår i vår matchningslösning
+    cout << a << " " << b << "\n";
+  }
+
 }
 
 
@@ -87,7 +86,11 @@ int main(void) {
 
   readBipartiteGraph();
 
+  writeFlowGraph();
+
   readMaxFlowSolution();
+
+  writeBipMatchSolution();
 
   // debugutskrift
   cerr << "Bipred avslutar\n";
