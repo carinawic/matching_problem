@@ -8,27 +8,8 @@
 #include <vector>
 
 struct vertex{
-    int data;
-    std::vector<int> neighbours;
+  std::vector<int> neighbours;
 };
-
-/*
-swap : 1-2
-
-1 <-> 2
-
-edge.leftflow = 0
-edge.rightflow = 4
-edge.cap = 9
-edge.leftvertex = 1
-edge.rightvertex = 2
-
-to
-
-1 -> 3
-2 -> 1
-2 <- 1
-*/
 
 
 using std::cin;
@@ -36,40 +17,48 @@ using std::cout;
 using std::cerr;
 
 int v = 0, s, t, e;
+vertex * vert; 
+
+int capacities[2000][2000]; 
+int flows[2000][2000]; 
+int restcapacities[2000][2000]; 
+
 
 void readFlowGraph() {
   // Läs antal hörn och kanter
   cin >> v >> s >> t >> e;
+  vert = new vertex[v];
 
   // Läs in kanterna
   for (int i = 0; i < e; ++i) {
     int a, b, c;
     cin >> a >> b >> c;
 
+    // add to neighbor list
+    vert[a].neighbours.push_back(b);
+
+    // fill matrices
+    // add edge from a to b with capacity c, flow 0, and restcapacity c
+
+    capacities[a][b] = c; // capacities[b][a] = ?;
+    //flows[a][b] = 0; already initialized
+    restcapacities[a][b] = c;
 
   }
 
+  
   // Debugutskrift
   cerr << "Läst in flödesgrafen\n";
 }
 
-int setup() {
-  vertex * vert = new vertex[v];
+int printGraph() {
+  
+
 
     for (int i=0;i<v;i++){
-        vert[i].data = i*i;
-    }
-
-    for (int i=0;i<v;i++){
-        vert[i].neighbours.push_back((i+1) % 5);
-        vert[i].neighbours.push_back((i+2) % 5);
-    }
-
-    for (int i=0;i<v;i++){
-         std::cout << "vector " << i << " has value " << vert[i].data << std::endl;
         for (int j=0;j<vert[i].neighbours.size();j++){
             int nodeNum = vert[i].neighbours[j];
-            std::cout << "vector " << i << " has neighbours " << vert[i].neighbours[j] << " with data " << vert[nodeNum].data << std::endl;
+            std::cout << "vector " << i << " has neighbours " << vert[i].neighbours[j] << std::endl;
         }
         std::cout << std::endl ;
     }
@@ -112,11 +101,12 @@ int main(void) {
 
   readFlowGraph();
 
-  setup();
+  printGraph();
 
   //solveFlowProblem();
 
   //writeFlowGraphSolution();
+
 
   // debugutskrift
   cerr << "Avslutar\n";
