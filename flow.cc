@@ -98,6 +98,7 @@ while det finns en stig p från s till t i restflödesgrafen do
 
 
 void writeFlowGraphSolution() {
+  cout << v;
 }
 
 
