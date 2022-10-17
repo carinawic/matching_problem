@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 
 struct vertex{
   std::vector<int> neighbours;
@@ -17,11 +18,11 @@ using std::cout;
 using std::cerr;
 
 int v = 0, s, t, e;
-vertex * vert; 
+vertex * vert;
 
-int capacities[2000][2000]; 
-int flows[2000][2000]; 
-int restcapacities[2000][2000]; 
+int capacities[2000][2000];
+int flows[2000][2000];
+int restcapacities[2000][2000];
 
 
 void readFlowGraph() {
@@ -46,14 +47,12 @@ void readFlowGraph() {
 
   }
 
-  
+
   // Debugutskrift
   cerr << "Läst in flödesgrafen\n";
 }
 
 int printGraph() {
-  
-
 
     for (int i=0;i<v;i++){
         for (int j=0;j<vert[i].neighbours.size();j++){
@@ -81,6 +80,27 @@ while det finns en stig p från s till t i restflödesgrafen do
          cf[u,v]:=c[u,v] - f[u,v]; cf[v,u]:=c[v,u] - f[v,u]
 
 */
+  std::queue<int> toVisitQueue;
+  std::vector<int> visited(v+1);
+
+  toVisitQueue.push(s);
+  int node = -1;
+
+  while (!toVisitQueue.empty()) {
+    // BFS
+    node = toVisitQueue.front();
+    toVisitQueue.pop();
+    visited[node] = 1;
+    cout << "Visting node: " << node << "\n";
+
+    for (int i=0;i<vert[node].neighbours.size();i++) {
+      int neighbour = vert[node].neighbours[i];
+      if (!visited[neighbour]) {
+        toVisitQueue.push(neighbour);
+      }
+    }
+
+  }
 
 
 }
@@ -103,7 +123,7 @@ int main(void) {
 
   printGraph();
 
-  //solveFlowProblem();
+  solveFlowProblem();
 
   //writeFlowGraphSolution();
 
