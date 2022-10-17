@@ -84,23 +84,43 @@ while det finns en stig p från s till t i restflödesgrafen do
   std::vector<int> visited(v+1);
 
   toVisitQueue.push(s);
-  visited[s] = 1;
+  visited[s] = s;
   int node = -1;
 
+  std::vector<int> path;
+
+  // BFS, hitta stig
   while (!toVisitQueue.empty()) {
-    // BFS
     node = toVisitQueue.front();
     toVisitQueue.pop();
     cout << "Visting node: " << node << "\n";
-
+    if (node == t) {
+      // bygger vi ihop stigen
+      int parent = t;
+      while (true) {
+        path.push_back(parent);
+        parent = visited[parent];
+        if (parent == s) {
+          path.push_back(parent);
+          break;
+        }
+      }
+      break;
+    }
     for (int i=0;i<vert[node].neighbours.size();i++) {
       int neighbour = vert[node].neighbours[i];
       if (!visited[neighbour]) {
-        visited[neighbour] = 1;
+        visited[neighbour] = node;
         toVisitQueue.push(neighbour);
       }
     }
-
+  }
+  if (path.empty()) {
+    // Ingen stig från s till t.
+  }
+  // hittat stig från s till t.
+  for (int i = 0; i < path.size(); i++) {
+    cout << path[i] << ", ";
   }
 
 

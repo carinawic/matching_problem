@@ -1,3 +1,7 @@
-#!/bin/bash
-test1 ="2 \n 1 2 \n 1 \n 1 2 3"
-echo $(./flow $test1)
+#!/bin/bash
+./flow <<EOF
+2
+1 2
+2
+1 2 3
+EOF
