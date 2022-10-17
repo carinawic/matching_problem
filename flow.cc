@@ -84,18 +84,19 @@ while det finns en stig p från s till t i restflödesgrafen do
   std::vector<int> visited(v+1);
 
   toVisitQueue.push(s);
+  visited[s] = 1;
   int node = -1;
 
   while (!toVisitQueue.empty()) {
     // BFS
     node = toVisitQueue.front();
     toVisitQueue.pop();
-    visited[node] = 1;
     cout << "Visting node: " << node << "\n";
 
     for (int i=0;i<vert[node].neighbours.size();i++) {
       int neighbour = vert[node].neighbours[i];
       if (!visited[neighbour]) {
+        visited[neighbour] = 1;
         toVisitQueue.push(neighbour);
       }
     }
