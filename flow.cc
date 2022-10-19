@@ -106,7 +106,7 @@ void solveFlowProblem() {
             // Finns det plats att flöda?
             cout << "Capacity ok. \n";
             toVisitQueue.push(neighbour);
-            visited[neighbour] = node; 
+            visited[neighbour] = node;
           }
         }
       }
@@ -161,7 +161,24 @@ while det finns en stig p från s till t i restflödesgrafen do
 void writeFlowGraphSolution() {
   cout << "Print solution! \n";
   cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
-
+  int flowingEdges = 0;
+  for (int a = 1; a < v; a++) {
+    for (int i = 0; i < vert[a].neighbours.size(); i++) {
+      int b = vert[a].neighbours[i];
+      if (flows[a][b] > 0) {
+        flowingEdges++;
+      }
+    }
+  }
+  cout << flowingEdges << "\n";
+  for (int a = 1; a < v; a++) {
+    for (int i = 0; i < vert[a].neighbours.size(); i++) {
+      int b = vert[a].neighbours[i];
+      if (flows[a][b] > 0) {
+        cout << a << " " << b << " " << flows[a][b] << "\n";
+      }
+    }
+  }
 }
 
 
