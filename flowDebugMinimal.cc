@@ -20,7 +20,8 @@ using std::cerr;
 
 int v = 0, s, t, e;
 int maxFlow = 0;
-//vertex * vert;
+
+std::vector<vertex> vert;
 
 int capacities[2000][2000];
 int flows[2000][2000];
@@ -29,18 +30,17 @@ int restcapacities[2000][2000];
 
 void readFlowGraph() {
   cin >> v >> s >> t >> e;
-  std::vector<vertex> vert(v); 
-  for(int x = 0; x < v; ++x) {
-    vert[x] = new vertex();
+  
+  for(int i=0;i<v;i++){
+    vert.push_back({{}});
   }
-  //vert = new vertex[v];
 
   for (int i = 0; i < e; ++i) {
     int a, b, c;
     cin >> a >> b >> c;
 
+    vert[0].neighbours.push_back(b); // "at" syntax
 
-    vert[a].neighbours.push_back(b);
     capacities[a][b] = c;
     restcapacities[a][b] = c;
   }

@@ -20,21 +20,23 @@ using std::cerr;
 
 int v = 0, s, t, e;
 int maxFlow = 0;
-vertex * vert;
+
+std::vector<vertex> vert;
 
 int capacities[2000][2000];
 int flows[2000][2000];
 int restcapacities[2000][2000];
 
-
 void readFlowGraph() {
   cin >> v >> s >> t >> e;
-  vert = new vertex[v];
+  
+  for(int i=0;i<v;i++){
+    vert.push_back({{}});
+  }
 
   for (int i = 0; i < e; ++i) {
     int a, b, c;
     cin >> a >> b >> c;
-
 
     vert[a].neighbours.push_back(b);
     capacities[a][b] = c;
@@ -86,10 +88,11 @@ void solveFlowProblem() {
     }
 
 
-    int r = std::numeric_limits<int>::max();
+    int r = 5000000; //inf is not std in kattis old version
     for (int i = 1; i < path.size(); i++) {
       r = std::min(r, restcapacities[path[i]][path[i-1]]);
     }
+    
     maxFlow += r;
 
     for (int i = 1; i < path.size(); i++) {
@@ -130,14 +133,6 @@ void writeFlowGraphSolution() {
   }
 }
 
-void writeFakeFlowGraphSolution() {
-  cout << 2 << "\n";
-  cout << 1 << " " << 2 << " " << 10 << "\n";
-  cout << 1 << "\n";
-  cout << 1 << " " << 2 << " " << 10 << "\n";
-
-}
-
 
 
 int main(void) {
@@ -145,13 +140,12 @@ int main(void) {
   cin.tie(0);
 
 
-  //readFlowGraph();
+  readFlowGraph();
 
-  //solveFlowProblem();
+  solveFlowProblem();
 
-  //writeFlowGraphSolution();
+  writeFlowGraphSolution();
 
-  writeFakeFlowGraphSolution();
 
   cout.flush();
 
