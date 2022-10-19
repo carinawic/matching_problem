@@ -88,7 +88,7 @@ void solveFlowProblem() {
     }
 
 
-    int r = 5000000; //inf is not std in kattis old version
+    int r = 2000000000; //inf is not std in kattis old version
     for (int i = 1; i < path.size(); i++) {
       r = std::min(r, restcapacities[path[i]][path[i-1]]);
     }
