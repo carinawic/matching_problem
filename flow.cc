@@ -18,6 +18,7 @@ using std::cout;
 using std::cerr;
 
 int v = 0, s, t, e;
+int maxFlow = 0;
 vertex * vert;
 
 int capacities[2000][2000];
@@ -66,13 +67,87 @@ int printGraph() {
 }
 
 void solveFlowProblem() {
+  std::queue<int> toVisitQueue;
+  std::vector<int> visited(v+1);
+  int node = -1;
+  std::vector<int> path;
 
-/*
+  while (true) {
+    // BFS, hitta stig
+    while(!toVisitQueue.empty()) toVisitQueue.pop();
+    for (int i = 0; i < visited.size(); i++) {
+      visited[i] = 0;
+    }
+    toVisitQueue.push(s);
+    visited[s] = s;
+
+    while (!toVisitQueue.empty()) {
+      node = toVisitQueue.front();
+      toVisitQueue.pop();
+      cout << "Visting node: " << node << "\n";
+      if (node == t) {
+        // bygger vi ihop stigen
+        int parent = t;
+        while (true) {
+          path.push_back(parent);
+          parent = visited[parent];
+          if (parent == s) {
+            path.push_back(parent);
+            break;
+          }
+        }
+        break;
+      }
+      for (int i=0;i<vert[node].neighbours.size();i++) {
+        int neighbour = vert[node].neighbours[i];
+        if (!visited[neighbour]) {
+          cout << "Node " << neighbour << " was not visited. \n";
+          if (restcapacities[node][neighbour] > 0) {
+            // Finns det plats att flöda?
+            cout << "Capacity ok. \n";
+            toVisitQueue.push(neighbour);
+            visited[neighbour] = node; 
+          }
+        }
+      }
+    }
+    if (path.empty()) {
+      // Ingen stig från s till t.
+      break;
+    }
+    // hittat stig från s till t.
+    for (int i = 0; i < path.size(); i++) {
+      cout << path[i] << ", ";
+    }
+
+    int r = std::numeric_limits<int>::max(); // Flaskhalsen.
+    for (int i = 1; i < path.size(); i++) {
+      r = std::min(r, restcapacities[path[i]][path[i-1]]);
+    }
+    maxFlow += r;
+    cout << "\n" << "r: " << r << " " << "maxFlow is now: " << maxFlow << "\n";
+
+    for (int i = 1; i < path.size(); i++) {
+      int u = path[i];
+      int v = path[i-1];
+
+      flows[u][v] = flows[u][v]+r;
+      flows[v][u] = -flows[u][v];
+
+      restcapacities[u][v] = capacities[u][v] - flows[u][v];
+      restcapacities[v][u] = capacities[v][u] - flows[v][u];
+    }
+
+    // Töm stigen.
+    path.clear();
+  }
+  /*
 c[u,v] är kapaciteten från u till v, f[u,v] är flödet, cf[u,v] är restkapaciteten.
 
 for varje kant (u,v) i grafen do
     f[u,v]:=0; f[v,u]:=0
     cf[u,v]:=c[u,v]; cf[v,u]:=c[v,u]
+
 while det finns en stig p från s till t i restflödesgrafen do
     r:=min(cf[u,v]: (u,v) ingår i p)
     for varje kant (u,v) i p do
@@ -80,55 +155,13 @@ while det finns en stig p från s till t i restflödesgrafen do
          cf[u,v]:=c[u,v] - f[u,v]; cf[v,u]:=c[v,u] - f[v,u]
 
 */
-  std::queue<int> toVisitQueue;
-  std::vector<int> visited(v+1);
-
-  toVisitQueue.push(s);
-  visited[s] = s;
-  int node = -1;
-
-  std::vector<int> path;
-
-  // BFS, hitta stig
-  while (!toVisitQueue.empty()) {
-    node = toVisitQueue.front();
-    toVisitQueue.pop();
-    cout << "Visting node: " << node << "\n";
-    if (node == t) {
-      // bygger vi ihop stigen
-      int parent = t;
-      while (true) {
-        path.push_back(parent);
-        parent = visited[parent];
-        if (parent == s) {
-          path.push_back(parent);
-          break;
-        }
-      }
-      break;
-    }
-    for (int i=0;i<vert[node].neighbours.size();i++) {
-      int neighbour = vert[node].neighbours[i];
-      if (!visited[neighbour]) {
-        visited[neighbour] = node;
-        toVisitQueue.push(neighbour);
-      }
-    }
-  }
-  if (path.empty()) {
-    // Ingen stig från s till t.
-  }
-  // hittat stig från s till t.
-  for (int i = 0; i < path.size(); i++) {
-    cout << path[i] << ", ";
-  }
-
-
 }
 
 
 void writeFlowGraphSolution() {
-  cout << v;
+  cout << "Print solution! \n";
+  cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
+
 }
 
 
@@ -146,7 +179,7 @@ int main(void) {
 
   solveFlowProblem();
 
-  //writeFlowGraphSolution();
+  writeFlowGraphSolution();
 
 
   // debugutskrift
