@@ -30,7 +30,7 @@ int restcapacities[2000][2000];
 void readFlowGraph() {
   cin >> v >> s >> t >> e;
   
-  for(int i=0;i<v;i++){
+  for(int i=0;i<v+1;i++){
     vert.push_back({{}});
   }
 
@@ -88,7 +88,7 @@ void solveFlowProblem() {
     }
 
 
-    int r = 2000000000; //inf is not std in kattis old version
+    int r = 2147483647; //inf is not std in kattis old version
     for (int i = 1; i < path.size(); i++) {
       r = std::min(r, restcapacities[path[i]][path[i-1]]);
     }
@@ -114,7 +114,7 @@ void solveFlowProblem() {
 void writeFlowGraphSolution() {
   cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
   int flowingEdges = 0;
-  for (int a = 1; a < v; a++) {
+  for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
       if (flows[a][b] > 0) {
@@ -123,7 +123,7 @@ void writeFlowGraphSolution() {
     }
   }
   cout << flowingEdges << "\n";
-  for (int a = 1; a < v; a++) {
+  for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
       if (flows[a][b] > 0) {
