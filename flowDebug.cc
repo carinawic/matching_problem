@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <string>
+#include <sstream>      // std::ostringstream
 using namespace std;
 
 struct vertex{
@@ -23,7 +25,7 @@ int maxFlow = 0;
 
 std::vector<vertex> vert;
 
-int capacities[2000][2000];
+int capacities[2000][2000][132];
 int flows[2000][2000];
 int restcapacities[2000][2000];
 
@@ -38,9 +40,24 @@ void readFlowGraph() {
     int a, b, c;
     cin >> a >> b >> c;
 
-    vert[a].neighbours.push_back(b);
-    capacities[a][b] = c;
-    restcapacities[a][b] = c;
+    
+    capacities[a][b][0] += c;
+    
+
+    for(int j = 1; j < 132; j++){
+      
+      if(capacities[a][b][j] == 0){
+        capacities[a][b][j] = c;
+        
+        vert[a].neighbours.push_back(b);
+        break;
+      
+      }
+    }
+
+    
+    
+    restcapacities[a][b] += c;
   }
 }
 
@@ -102,8 +119,8 @@ void solveFlowProblem() {
       flows[u][v] = flows[u][v]+r;
       flows[v][u] = -flows[u][v];
 
-      restcapacities[u][v] = capacities[u][v] - flows[u][v];
-      restcapacities[v][u] = capacities[v][u] - flows[v][u];
+      restcapacities[u][v] = capacities[u][v][0] - flows[u][v];
+      restcapacities[v][u] = capacities[v][u][0] - flows[v][u];
     }
 
     path.clear();
@@ -112,25 +129,66 @@ void solveFlowProblem() {
 
 
 void writeFlowGraphSolution() {
+
+  // cout << " answer: \n";
+  string var = "";
+  ostringstream convert;   // stream used for the conversion
+
   cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
   int flowingEdges = 0;
   for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
       if (flows[a][b] > 0) {
-        flowingEdges++;
+        flows[a][b] = 0;
+        if(capacities[a][b][2] != 0){
+          for(int j = 1; j < 132; j++){
+            
+            if(capacities[a][b][j] == 0){
+              break;
+            }else{
+              //cout << "found edge between " << a << " and " << b << " with cap " << capacities[a][b][j] << "\n";
+              
+              
+              convert << a;
+              convert << " ";
+              convert << b;
+              convert << " ";
+              convert << capacities[a][b][j];
+              convert << "\n";
+
+              flowingEdges++;
+            }
+          }
+        }else{
+          flowingEdges++;
+
+          //cout << "found edge between " << a << " and " << b << " with cap " << capacities[a][b][0] << "\n";
+          
+          convert << a;
+          convert << " ";
+          convert << b;
+          convert << " ";
+          convert << capacities[a][b][0];
+          convert << "\n";
+        }
+        
       }
     }
   }
   cout << flowingEdges << "\n";
-  for (int a = 1; a < v+1; a++) {
-    for (int i = 0; i < vert[a].neighbours.size(); i++) {
-      int b = vert[a].neighbours[i];
-      if (flows[a][b] > 0) {
-        cout << a << " " << b << " " << flows[a][b] << "\n";
-      }
-    }
-  }
+  
+  var = convert.str(); // set 'Result' to the contents of the stream
+  cout << var;
+ 
+  // for (int a = 1; a < v+1; a++) {
+  //   for (int i = 0; i < vert[a].neighbours.size(); i++) {
+  //     int b = vert[a].neighbours[i];
+  //     if (flows[a][b] > 0) {
+  //       cout << a << " " << b << " " << flows[a][b] << "\n";
+  //     }
+  //   }
+  // }
 }
 
 
