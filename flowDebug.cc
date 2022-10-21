@@ -8,7 +8,8 @@
 #include <vector>
 #include <queue>
 #include <string>
-#include <sstream>      // std::ostringstream
+// #include <stdio.h>
+// #include <stdlib.h>
 using namespace std;
 
 struct vertex{
@@ -25,7 +26,7 @@ int maxFlow = 0;
 
 std::vector<vertex> vert;
 
-int capacities[2000][2000][132];
+int capacities[2000][2000][100];
 int flows[2000][2000];
 int restcapacities[2000][2000];
 
@@ -130,9 +131,8 @@ void solveFlowProblem() {
 
 void writeFlowGraphSolution() {
 
-  // cout << " answer: \n";
-  string var = "";
-  ostringstream convert;   // stream used for the conversion
+  int answerdgeNumbers[30000];
+  int pekareInAns = 0;
 
   cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
   int flowingEdges = 0;
@@ -149,13 +149,13 @@ void writeFlowGraphSolution() {
             }else{
               //cout << "found edge between " << a << " and " << b << " with cap " << capacities[a][b][j] << "\n";
               
+              answerdgeNumbers[pekareInAns] = a;
+              pekareInAns++;
+              answerdgeNumbers[pekareInAns] = b;
+              pekareInAns++;
+              answerdgeNumbers[pekareInAns] = capacities[a][b][j];
+              pekareInAns++;
               
-              convert << a;
-              convert << " ";
-              convert << b;
-              convert << " ";
-              convert << capacities[a][b][j];
-              convert << "\n";
 
               flowingEdges++;
             }
@@ -165,21 +165,31 @@ void writeFlowGraphSolution() {
 
           //cout << "found edge between " << a << " and " << b << " with cap " << capacities[a][b][0] << "\n";
           
-          convert << a;
-          convert << " ";
-          convert << b;
-          convert << " ";
-          convert << capacities[a][b][0];
-          convert << "\n";
+          answerdgeNumbers[pekareInAns] = a;
+          pekareInAns++;
+          answerdgeNumbers[pekareInAns] = b;
+          pekareInAns++;
+          answerdgeNumbers[pekareInAns] = capacities[a][b][0];
+          pekareInAns++;
+              
+          
         }
         
       }
     }
   }
+
   cout << flowingEdges << "\n";
+  for(int i=0;i<pekareInAns;i+=3){
+
+    // if(i!=0){
+    //   cout << "\n";
+    // }
+    cout << answerdgeNumbers[i] << " " << answerdgeNumbers[i+1] << " " << answerdgeNumbers[i+2] << "\n";
+
+   
+  }
   
-  var = convert.str(); // set 'Result' to the contents of the stream
-  cout << var;
  
   // for (int a = 1; a < v+1; a++) {
   //   for (int i = 0; i < vert[a].neighbours.size(); i++) {
