@@ -25,12 +25,12 @@ int maxFlow = 0;
 
 std::vector<vertex> vert;
 
-int capacities[2002][2002]; // 9223372036854775807
-int flows[2002][2002];
-int restcapacities[2002][2002];
+short capacities[10004][10004]; // 9223372036854775807
+short flows[10004][10004];
+short restcapacities[10004][10004];
 
 
-int x, y, bipE;
+short x, y, bipE;
 
 void readFlowGraph() {
 
@@ -87,9 +87,7 @@ void readFlowGraph() {
 
     capacities[i+x][t] = 1;
     restcapacities[i+x][t] = 1;
-
   }
-
 }
 
 void solveFlowProblem() {
@@ -147,22 +145,22 @@ void solveFlowProblem() {
     // cout << "\n" << std::flush;
 
 
-    int r = 2000000; //inf is not std in kattis old version
+    // short r = 32766; //inf is not std in kattis old version
     
-    for (int i = 1; i < path.size(); i++) {
-      r = std::min(r, restcapacities[path[i]][path[i-1]]);
-    }
+    // for (int i = 1; i < path.size(); i++) {
+    //   r = std::min(r, restcapacities[path[i]][path[i-1]]);
+    // }
     
     // cout << "maxflow is: " << maxFlow << "\n";
     // cout << "r is: " << r << "\n";
-    maxFlow += r;
+    maxFlow += 1;
     
 
     for (int i = 1; i < path.size(); i++) {
       int u = path[i];
       int v = path[i-1];
 
-      flows[u][v] = flows[u][v]+r;
+      flows[u][v] = flows[u][v]+1;
       flows[v][u] = -flows[u][v];
 
       restcapacities[u][v] = capacities[u][v] - flows[u][v];
@@ -173,66 +171,34 @@ void solveFlowProblem() {
   }
 }
 
-
 void writeFlowGraphSolution() {
     
-
   // Skriv ut x, x och flödete (maximala matchning).
   cout << x << " " << y << "\n" << maxFlow << "\n" << std::flush;
-
-  int flowingEdges = 0;
-  
-  int answer[30000];
-  int answerPekare = 0;
 
   for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
       if (flows[a][b] > 0) {
-        answer[answerPekare] = a;
-        answerPekare++;
-        answer[answerPekare] = b;
-        answerPekare++;
-        answer[answerPekare] = flows[a][b];
-        answerPekare++;
         flows[a][b] = 0;
-        flowingEdges++;
+
+        if ((a != s) && (b != t)) {
+            // Skriv ut kant x-y.
+            cout << a << " " << b << "\n" << std::flush;
+        }
       }
     }
   }
-  // cout << flowingEdges << "\n" << std::flush;
-  for (int i = 0; i < answerPekare; i+=3) {
-    if ((answer[i] != s) && (answer[i+1] != t)) {
-      // Skriv ut kant x-y.
-      cout << answer[i] << " " << answer[i+1] << "\n" << std::flush;
-    }
-    
-  }
-  // for (int a = 1; a < v+1; a++) {
-  //   for (int i = 0; i < vert[a].neighbours.size(); i++) {
-  //     int b = vert[a].neighbours[i];
-  //     if (flows[a][b] > 0) {
-  //       cout << a << " " << b << " " << flows[a][b] << "\n";
-  //     }
-  //   }
-  // }
 }
-
-
 
 int main(void) {
   std::ios::sync_with_stdio(false);
   cin.tie(0);
 
-
   readFlowGraph();
-
   solveFlowProblem();
-
   writeFlowGraphSolution();
 
-
   cout.flush();
-
   return 0;
 }
