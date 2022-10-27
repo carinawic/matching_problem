@@ -23,8 +23,8 @@ int maxFlow = 0;
 
 std::vector<vertex> vert;
 
-const int numParalellEdges = 10;
-int capacities[2002][2002][numParalellEdges];
+const int numParallelEdges = 10;
+int capacities[2002][2002][numParallelEdges];
 int flows[2002][2002];
 int restcapacities[2002][2002];
 
@@ -115,60 +115,24 @@ void solveFlowProblem() {
 
 
 void writeFlowGraphSolution() {
-
-  int answerdgeNumbers[40000]; // TODO change back
-  int pekareInAns = 0;
-
   cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
   int flowingEdges = 0;
   for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
       if (flows[a][b] > 0) {
-        flows[a][b] = 0;
-        if(capacities[a][b][2] != 0){
-          for(int j = 1; j < numParalellEdges; j++){
-            
-            if(capacities[a][b][j] == 0){
-              break;
-            }else{
-              //cout << "found edge between " << a << " and " << b << " with cap " << capacities[a][b][j] << "\n";
-              
-              answerdgeNumbers[pekareInAns] = a;
-              pekareInAns++;
-              answerdgeNumbers[pekareInAns] = b;
-              pekareInAns++;
-              answerdgeNumbers[pekareInAns] = capacities[a][b][j];
-              pekareInAns++;
-              
-
-              flowingEdges++;
-            }
-          }
-        }else{
-          flowingEdges++;
-
-          //cout << "found edge between " << a << " and " << b << " with cap " << capacities[a][b][0] << "\n";
-          
-          answerdgeNumbers[pekareInAns] = a;
-          pekareInAns++;
-          answerdgeNumbers[pekareInAns] = b;
-          pekareInAns++;
-          answerdgeNumbers[pekareInAns] = capacities[a][b][0];
-          pekareInAns++;
-              
-          
-        }
-        
+        flowingEdges++;
       }
     }
   }
-
   cout << flowingEdges << "\n";
-  for(int i=0;i<pekareInAns;i+=3){
-
-    cout << answerdgeNumbers[i] << " " << answerdgeNumbers[i+1] << " " << answerdgeNumbers[i+2] << "\n";
-
+  for (int a = 1; a < v+1; a++) {
+    for (int i = 0; i < vert[a].neighbours.size(); i++) {
+      int b = vert[a].neighbours[i];
+      if (flows[a][b] > 0) {
+        cout << a << " " << b << " " << flows[a][b] << "\n";
+      }
+    }
   }
 }
 
