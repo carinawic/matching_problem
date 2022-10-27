@@ -1,7 +1,9 @@
 /*
 *
 *
-*
+* DEBUG IDEAS:
+* TODO
+* optimize sizes of matrices
 */
 
 #include <iostream>
@@ -19,13 +21,13 @@ using std::cout;
 using std::cerr;
 
 int v = 0, s, t, e;
-int maxFlow = 0;
+long long maxFlow = 0;
 
 std::vector<vertex> vert;
 
-int capacities[5002][5002];
-int flows[5002][5002];
-int restcapacities[5002][5002];
+long long capacities[2002][2002]; // 9223372036854775807
+long long flows[2002][2002];
+long long restcapacities[2002][2002];
 
 void readFlowGraph() {
   cin >> v >> s >> t >> e;
@@ -34,11 +36,13 @@ void readFlowGraph() {
     vert.push_back({{}});
   }
 
-  for (int i = 0; i < e; ++i) {
-    int a, b, c;
+  for (int i = 0; i < e; i++) {
+    int a, b;
+    long long c;
     cin >> a >> b >> c;
 
     vert[a].neighbours.push_back(b);
+    vert[b].neighbours.push_back(a);
 
     // if(capacities[a][b] > 0){
     //   while(true){
@@ -48,8 +52,8 @@ void readFlowGraph() {
     // }
 
     capacities[a][b] = c;
-
-
+    //capacities[b][a] = c;
+    
     restcapacities[a][b] = c;
     
   }
@@ -100,7 +104,7 @@ void solveFlowProblem() {
     }
 
 
-    int r = 2147483647; //inf is not std in kattis old version
+    long long r = 9223372036854775806; //inf is not std in kattis old version
     for (int i = 1; i < path.size(); i++) {
       r = std::min(r, restcapacities[path[i]][path[i-1]]);
     }
@@ -129,23 +133,37 @@ void solveFlowProblem() {
 void writeFlowGraphSolution() {
   cout << v << "\n" << s << " " << t << " " << maxFlow << "\n";
   int flowingEdges = 0;
+  
+  long long answer[30000];
+  int answerPekare = 0;
+
   for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
       if (flows[a][b] > 0) {
+        answer[answerPekare] = a;
+        answerPekare++;
+        answer[answerPekare] = b;
+        answerPekare++;
+        answer[answerPekare] = flows[a][b];
+        answerPekare++;
+        flows[a][b] = 0;
         flowingEdges++;
       }
     }
   }
   cout << flowingEdges << "\n";
-  for (int a = 1; a < v+1; a++) {
-    for (int i = 0; i < vert[a].neighbours.size(); i++) {
-      int b = vert[a].neighbours[i];
-      if (flows[a][b] > 0) {
-        cout << a << " " << b << " " << flows[a][b] << "\n";
-      }
-    }
+  for (int i = 0; i < answerPekare; i+=3) {
+    cout << answer[i] << " " << answer[i+1] << " " << answer[i+2] << "\n";
   }
+  // for (int a = 1; a < v+1; a++) {
+  //   for (int i = 0; i < vert[a].neighbours.size(); i++) {
+  //     int b = vert[a].neighbours[i];
+  //     if (flows[a][b] > 0) {
+  //       cout << a << " " << b << " " << flows[a][b] << "\n";
+  //     }
+  //   }
+  // }
 }
 
 
