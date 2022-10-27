@@ -9,7 +9,8 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-
+#include <map>
+#include <tuple>
 
 using std::cin;
 using std::cout;
@@ -25,17 +26,20 @@ int maxFlow = 0;
 
 std::vector<vertex> vert;
 
-short capacities[10004][10004]; // 9223372036854775807
-short flows[10004][10004];
-short restcapacities[10004][10004];
+// short capacities[10004][10004]; // 9223372036854775807
+// short flows[10004][10004];
+// short restcapacities[10004][10004];
 
+map<tuple<short, short>, short> capacities;
+map<tuple<short, short>, short> flows;
+map<tuple<short, short>, short> restcapacities;
+// capacities.insert(pair<tuple <short, short>, short> (make_tuple(10, 15), 3));
 
 short x, y, bipE;
 
 void readFlowGraph() {
 
 
-  
   // Läs antal hörn och kanter
   cin >> x >> y >> bipE;
     
@@ -65,8 +69,16 @@ void readFlowGraph() {
     vert[a].neighbours.push_back(b);
     vert[b].neighbours.push_back(a);
 
-    capacities[a][b] = c;
-    restcapacities[a][b] = c;
+    
+    capacities.insert(pair<tuple <short, short>, short> (make_tuple(a, b), c));
+    capacities.insert(pair<tuple <short, short>, short> (make_tuple(b, a), 0));
+
+    restcapacities.insert(pair<tuple <short, short>, short> (make_tuple(a, b), c));
+    restcapacities.insert(pair<tuple <short, short>, short> (make_tuple(b, a), 0));
+
+    flows.insert(pair<tuple <short, short>, short> (make_tuple(a, b), 0));
+    flows.insert(pair<tuple <short, short>, short> (make_tuple(b, a), 0));
+    
   }
     
   // kanterna s-x
@@ -75,8 +87,15 @@ void readFlowGraph() {
     vert[s].neighbours.push_back(i);
     vert[i].neighbours.push_back(s);
 
-    capacities[s][i] = 1;
-    restcapacities[s][i] = 1;
+    capacities.insert(pair<tuple <short, short>, short> (make_tuple(s, i), 1));
+    capacities.insert(pair<tuple <short, short>, short> (make_tuple(i, s), 0));
+
+    restcapacities.insert(pair<tuple <short, short>, short> (make_tuple(s, i), 1));
+    restcapacities.insert(pair<tuple <short, short>, short> (make_tuple(i, s), 0));
+
+    flows.insert(pair<tuple <short, short>, short> (make_tuple(s, i), 0));
+    flows.insert(pair<tuple <short, short>, short> (make_tuple(i, s), 0));
+    
 
   }
 
@@ -85,8 +104,14 @@ void readFlowGraph() {
     vert[i+x].neighbours.push_back(t);
     vert[t].neighbours.push_back(i+x);
 
-    capacities[i+x][t] = 1;
-    restcapacities[i+x][t] = 1;
+    capacities.insert(pair<tuple <short, short>, short> (make_tuple(i+x, t), 1));
+    capacities.insert(pair<tuple <short, short>, short> (make_tuple(t, i+x), 0));
+
+    restcapacities.insert(pair<tuple <short, short>, short> (make_tuple(i+x, t), 1));
+    restcapacities.insert(pair<tuple <short, short>, short> (make_tuple(t, i+x), 0));
+    
+    flows.insert(pair<tuple <short, short>, short> (make_tuple(i+x, t), 0));
+    flows.insert(pair<tuple <short, short>, short> (make_tuple(t, i+x), 0));
   }
 }
 
@@ -126,7 +151,7 @@ void solveFlowProblem() {
       for (int i=0;i<vert[node].neighbours.size();i++) {
         int neighbour = vert[node].neighbours[i];
         if (!visited[neighbour]) {
-          if (restcapacities[node][neighbour] > 0) {
+          if (restcapacities.at(make_tuple(node, neighbour)) > 0) {
             toVisitQueue.push(neighbour);
             visited[neighbour] = node;
           }
@@ -159,12 +184,13 @@ void solveFlowProblem() {
     for (int i = 1; i < path.size(); i++) {
       int u = path[i];
       int v = path[i-1];
+    
+      flows[make_tuple(u,v)] = flows.at(make_tuple(u,v)) + 1;
+      flows[make_tuple(v,u)] = -flows.at(make_tuple(u,v));
+      
+      restcapacities[make_tuple(u,v)] = capacities.at(make_tuple(u,v)) - flows.at(make_tuple(u,v));
+      restcapacities[make_tuple(v,u)] = capacities.at(make_tuple(v,u)) - flows.at(make_tuple(v,u));
 
-      flows[u][v] = flows[u][v]+1;
-      flows[v][u] = -flows[u][v];
-
-      restcapacities[u][v] = capacities[u][v] - flows[u][v];
-      restcapacities[v][u] = capacities[v][u] - flows[v][u];
     }
 
     path.clear();
@@ -179,8 +205,8 @@ void writeFlowGraphSolution() {
   for (int a = 1; a < v+1; a++) {
     for (int i = 0; i < vert[a].neighbours.size(); i++) {
       int b = vert[a].neighbours[i];
-      if (flows[a][b] > 0) {
-        flows[a][b] = 0;
+      if (flows.at(make_tuple(a,b)) > 0) {
+        flows[make_tuple(a,b)] = 0;
 
         if ((a != s) && (b != t)) {
             // Skriv ut kant x-y.
