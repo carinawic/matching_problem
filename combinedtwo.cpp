@@ -26,19 +26,17 @@ int maxFlow = 0;
 
 std::vector<vertex> vert;
 
-// short capacities[10004][10004]; // 9223372036854775807
+// short capacities[10004][10004]; 
 // short flows[10004][10004];
 // short restcapacities[10004][10004];
 
 map<tuple<short, short>, short> capacities;
 map<tuple<short, short>, short> flows;
 map<tuple<short, short>, short> restcapacities;
-// capacities.insert(pair<tuple <short, short>, short> (make_tuple(10, 15), 3));
 
 short x, y, bipE;
 
 void readFlowGraph() {
-
 
   // Läs antal hörn och kanter
   cin >> x >> y >> bipE;
@@ -58,7 +56,6 @@ void readFlowGraph() {
     vert.push_back({{}});
   }
 
-  
 
   for (int i = 0; i < bipE; i++) { // edges x -> y
     int a, b;
@@ -163,23 +160,7 @@ void solveFlowProblem() {
       break;
     }
     
-    // cout << "path is: \n" << std::flush;
-    // for(int i=0;i<path.size();i++){
-    //     cout << path[i] << " " << std::flush;
-    // }
-    // cout << "\n" << std::flush;
-
-
-    // short r = 32766; //inf is not std in kattis old version
-    
-    // for (int i = 1; i < path.size(); i++) {
-    //   r = std::min(r, restcapacities[path[i]][path[i-1]]);
-    // }
-    
-    // cout << "maxflow is: " << maxFlow << "\n";
-    // cout << "r is: " << r << "\n";
     maxFlow += 1;
-    
 
     for (int i = 1; i < path.size(); i++) {
       int u = path[i];
